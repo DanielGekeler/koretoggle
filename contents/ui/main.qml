@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.plasmoid
@@ -35,7 +36,6 @@ PlasmoidItem {
                 return
             }
 
-            // core state read result
             root.parseCores(out)
         }
     }
@@ -78,28 +78,51 @@ PlasmoidItem {
     }
 
     compactRepresentation: Item {
-        PlasmaComponents.Label {
-            anchors.centerIn: parent
-            text: "CPU"
+        Kirigami.Icon {
+            anchors.fill: parent
+            anchors.margins: 4
+            source: "cpu"
+            active: compactMouse.containsMouse
         }
         MouseArea {
+            id: compactMouse
             anchors.fill: parent
+            hoverEnabled: true
             onClicked: root.expanded = !root.expanded
         }
     }
 
     fullRepresentation: ColumnLayout {
-        implicitWidth: 280
+        spacing: 0
+        Layout.minimumWidth: 240
+        Layout.preferredWidth: 240
+        Layout.maximumWidth: 240
 
         Component.onCompleted: root.checkHelper()
 
-        PlasmaComponents.Label {
+        ColumnLayout {
             visible: !root.helperInstalled && !root.loading
-            text: "Helper not installed.\nRun: sudo ./install.sh"
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
             Layout.fillWidth: true
-            Layout.margins: 12
+            Layout.margins: Kirigami.Units.largeSpacing
+            spacing: Kirigami.Units.smallSpacing
+
+            Kirigami.Icon {
+                source: "dialog-warning"
+                Layout.alignment: Qt.AlignHCenter
+                implicitWidth: Kirigami.Units.iconSizes.large
+                implicitHeight: Kirigami.Units.iconSizes.large
+            }
+            PlasmaComponents.Label {
+                text: "Helper not installed"
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+            }
+            PlasmaComponents.Label {
+                text: "sudo ./install.sh"
+                font.family: "monospace"
+                opacity: 0.7
+                Layout.alignment: Qt.AlignHCenter
+            }
         }
 
         ListView {
@@ -110,18 +133,25 @@ PlasmoidItem {
             model: coreModel
             delegate: RowLayout {
                 width: coreList.width
+                spacing: 0
+
                 PlasmaComponents.Label {
                     text: "CPU " + model.coreNum
                     Layout.fillWidth: true
+                    leftPadding: Kirigami.Units.largeSpacing
+                    topPadding: Kirigami.Units.smallSpacing
+                    bottomPadding: Kirigami.Units.smallSpacing
                 }
                 PlasmaComponents.Label {
                     visible: model.alwaysOn
                     text: "always on"
                     opacity: 0.5
+                    rightPadding: Kirigami.Units.largeSpacing
                 }
                 Controls.Switch {
                     visible: !model.alwaysOn
                     checked: model.online
+                    rightPadding: Kirigami.Units.largeSpacing
                     onClicked: root.toggleCore(model.coreNum, model.online)
                 }
             }
@@ -130,6 +160,7 @@ PlasmoidItem {
         PlasmaComponents.BusyIndicator {
             visible: root.loading
             Layout.alignment: Qt.AlignHCenter
+            Layout.margins: Kirigami.Units.largeSpacing
         }
     }
 }
