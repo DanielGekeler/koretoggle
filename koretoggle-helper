@@ -1,0 +1,29 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: koretoggle-helper <core> <state>" >&2
+    exit 1
+fi
+
+CORE="$1"
+STATE="$2"
+
+if ! [[ "$CORE" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid core number: $CORE" >&2
+    exit 1
+fi
+
+if [[ "$STATE" != "0" && "$STATE" != "1" ]]; then
+    echo "Invalid state: $STATE (must be 0 or 1)" >&2
+    exit 1
+fi
+
+SYSFS="/sys/devices/system/cpu/cpu${CORE}/online"
+
+if [[ ! -f "$SYSFS" ]]; then
+    echo "Core $CORE not found or not hotpluggable" >&2
+    exit 1
+fi
+
+echo "$STATE" > "$SYSFS"

@@ -1,0 +1,12 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Category": "System Information",
+        "Description": "Enable and disable individual CPU cores",
+        "Id": "org.koretoggle.plasmoid",
+        "License": "GPL-2.0-or-later",
+        "Name": "Koretoggle",
+        "Version": "0.1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
