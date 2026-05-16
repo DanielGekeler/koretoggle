@@ -8,6 +8,8 @@ fi
 
 rm -f /usr/lib/koretoggle-helper
 rm -f /usr/share/polkit-1/actions/org.koretoggle.toggle.policy
+rm -rf /usr/lib/qt6/qml/org/koretoggle
 
 echo "Removed /usr/lib/koretoggle-helper"
 echo "Removed /usr/share/polkit-1/actions/org.koretoggle.toggle.policy"
+echo "Removed /usr/lib/qt6/qml/org/koretoggle/"

@@ -8,13 +8,14 @@ A KDE Plasma 6 panel widget for enabling and disabling individual CPU cores at r
 
 ## Requirements
 - KDE Plasma 6
-- `plasma5support` package (provides the executable DataSource compatibility layer)
+- Qt 6 development packages (`qt6-base`, `qt6-declarative`)
+- `cmake`
 - `polkit` (for privilege escalation)
 
 ## Installation
-Koretoggle has two parts: a privileged helper that must be installed system-wide, and the plasmoid itself.
+Koretoggle has two parts: a privileged helper and native QML plugin that must be installed system-wide, and the plasmoid itself.
 
-### 1. Install the helper
+### 1. Install the helper and QML plugin
 Clone this repository and run the install script:
 
 ```bash
@@ -24,17 +25,12 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
+This builds and installs the native QML plugin, the helper binary, and the polkit policy.
+
 ### 2. Install the plasmoid
-**Manually:**
 
 ```bash
 kpackagetool6 --install . --type Plasma/Applet
-```
-
-Or install from the `.plasmoid` file:
-
-```bash
-kpackagetool6 --install org.koretoggle.plasmoid --type Plasma/Applet
 ```
 
 Then right-click your panel → *Add Widgets* → search for *Koretoggle*.
@@ -45,7 +41,7 @@ Click the widget icon in the panel to open the popup. Each CPU core is listed wi
 ## Uninstall
 ```bash
 sudo ./uninstall.sh
-kpackagetool6 --remove org.koretoggle.plasmoid --type Plasma/Applet
+kpackagetool6 --remove org.koretoggle.toggle --type Plasma/Applet
 ```
 
 ## License

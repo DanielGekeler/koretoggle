@@ -3,8 +3,8 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.plasmoid
+import org.koretoggle.runner
 
 PlasmoidItem {
     id: root
@@ -14,39 +14,55 @@ PlasmoidItem {
     property bool helperInstalled: false
     property bool loading: false
 
+    onExpandedChanged: {
+        if (root.expanded && helperInstalled && !loading) refreshCores()
+    }
+
+    Timer {
+        interval: 2000
+        running: root.expanded && root.helperInstalled && !root.loading
+        repeat: true
+        onTriggered: root.refreshCores()
+    }
+
     ListModel { id: coreModel }
 
-    Plasma5Support.DataSource {
-        id: cmdSource
-        engine: "executable"
-        connectedSources: []
+    CommandRunner {
+        id: runner
 
-        onNewData: function(source, data) {
-            disconnectSource(source)
-            var out = data["stdout"].trim()
-
-            if (source.startsWith("test ")) {
-                root.helperInstalled = out === "1"
+        onDone: function(command, exitCode, output) {
+            if (command.startsWith("test ")) {
+                root.helperInstalled = output === "1"
                 if (root.helperInstalled) root.loadCores()
                 return
             }
 
-            if (source.startsWith("pkexec ")) {
+            if (command.startsWith("pkexec ")) {
                 root.loadCores()
                 return
             }
 
-            root.parseCores(out)
+            root.parseCores(output)
         }
     }
 
     function checkHelper() {
-        cmdSource.connectSource("test -x /usr/lib/koretoggle-helper && echo 1 || echo 0")
+        runner.exec("test -x /usr/lib/koretoggle-helper && echo 1 || echo 0")
     }
 
     function loadCores() {
         loading = true
-        cmdSource.connectSource(
+        runner.exec(
+            "for d in /sys/devices/system/cpu/cpu[0-9]*/; do " +
+            "b=$(basename $d); f=${d}online; " +
+            "[ -f $f ] && echo \"$b $(cat $f)\" || echo \"$b -1\"; " +
+            "done | sort -V"
+        )
+    }
+
+    function refreshCores() {
+        if (loading) return
+        runner.exec(
             "for d in /sys/devices/system/cpu/cpu[0-9]*/; do " +
             "b=$(basename $d); f=${d}online; " +
             "[ -f $f ] && echo \"$b $(cat $f)\" || echo \"$b -1\"; " +
@@ -72,7 +88,7 @@ PlasmoidItem {
     }
 
     function toggleCore(coreNum, currentOnline) {
-        cmdSource.connectSource(
+        runner.exec(
             "pkexec /usr/lib/koretoggle-helper " + coreNum + " " + (currentOnline ? 0 : 1)
         )
     }
