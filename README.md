@@ -19,7 +19,7 @@ Koretoggle has two parts: a privileged helper and native QML plugin that must be
 Clone this repository and run the install script:
 
 ```bash
-git clone https://github.com/yourusername/koretoggle.git
+git clone git@github.com:DanielGekeler/koretoggle.git
 cd koretoggle
 chmod +x install.sh
 sudo ./install.sh
