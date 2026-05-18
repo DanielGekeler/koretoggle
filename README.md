@@ -13,10 +13,22 @@ A KDE Plasma 6 panel widget for enabling and disabling individual CPU cores at r
 - `polkit` (for privilege escalation)
 
 ## Installation
+
+### Arch Linux (PKGBUILD)
+
+```bash
+git clone https://github.com/DanielGekeler/koretoggle.git
+cd koretoggle
+makepkg -si
+```
+
+This builds and installs everything via pacman, including the plasmoid.
+
+### Manual
+
 Koretoggle has two parts: a privileged helper and native QML plugin that must be installed system-wide, and the plasmoid itself.
 
-### 1. Install the helper and QML plugin
-Clone this repository and run the install script:
+#### 1. Install the helper and QML plugin
 
 ```bash
 git clone https://github.com/DanielGekeler/koretoggle.git
@@ -27,7 +39,7 @@ sudo ./install.sh
 
 This builds and installs the native QML plugin, the helper binary, and the polkit policy.
 
-### 2. Install the plasmoid
+#### 2. Install the plasmoid
 
 ```bash
 kpackagetool6 --install . --type Plasma/Applet

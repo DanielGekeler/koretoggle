@@ -1,2 +1,9 @@
 org.koretoggle.plasmoid
 plugin/build/
+
+# makepkg artifacts
+koretoggle-git/
+src/
+pkg/
+*.pkg.tar.zst
+*.pkg.tar.xz
